@@ -7,11 +7,6 @@ function App() {
   const [task, setTask] = useState('')
   const [tasks, setTasks] = useState([])
 
-  const deleteTask = id => {
-    const updatedTasks = tasks.filter(task => task.id !== id)
-    setTasks(updatedTasks)
-  }
-
   return (
     <>
       <div className="App">
@@ -20,9 +15,15 @@ function App() {
           <InputGroup.Text>TASK LIST</InputGroup.Text>
           <Form.Control
             placeholder="Add a task here..."
-            aria-label="Username"
             value={task}
             onChange={e => setTask(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                setTasks([...tasks, { id: nextId, name: task }])
+                setTask('')
+                nextId++
+              }
+            }}
           />
           <Button
             onClick={() => {
@@ -41,7 +42,10 @@ function App() {
             {tasks.map(task => (
               <li key={task.id}>
                 {task.name}{' '}
-                <Button variant="danger" onClick={() => deleteTask(task.id)}>
+                <Button
+                  variant="danger"
+                  onClick={() => setTasks(tasks.filter(t => t.id !== task.id))}
+                >
                   Eliminar
                 </Button>
               </li>
